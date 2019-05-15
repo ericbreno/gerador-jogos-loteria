@@ -3,7 +3,7 @@ const fs = require('fs');
 const saveBets = bets => {
     const theresFolder = fs.existsSync('./jogos');
     if (!theresFolder) {
-        fs.mkdir('./jogos');
+        fs.mkdirSync('./jogos');
     }
 
     const lastPath = './jogos/last.json';
@@ -40,7 +40,7 @@ const extractArgs = () => {
     const mapArgs = { ...defaults, ...mapArgsInput };
 
     return mapArgs;
-}
+};
 
 const shuffle = arr => {
     const genIndex = () => Math.round(Math.random() * (arr.length - 1));
@@ -54,13 +54,13 @@ const shuffle = arr => {
     return newArr;
 };
 
-const generateNewBet = (base, available, betSize, bets) => {
-    if (bets <= 0) return [];
+const generateNewBet = (base, available, betSize, remainingBets) => {
+    if (remainingBets <= 0) return [];
     const newBet = base
         .concat(shuffle(available))
         .slice(0, betSize)
         .sort((a, b) => Number(a) - Number(b));
-    const otherBets = generateNewBet(base, available, betSize, bets - 1);
+    const otherBets = generateNewBet(base, available, betSize, remainingBets - 1);
 
     if (otherBets.some(fullBet => JSON.stringify(fullBet) === JSON.stringify(newBet))) {
         console.log('Avoiding repeated');
@@ -74,11 +74,12 @@ const generateBets = (args, size = 25, betSize = 15) => {
     const baseNumbers = args['-numeros'].split(',').filter(i => i).map(Number);
     const totalBets = Number(args['-jogos']);
 
-    const availableNumbers = allNumbers.filter(n => !baseNumbers.some(nbase => nbase === n));
+    const availableNumbers = allNumbers.filter(n => !baseNumbers.includes(n));
 
     return generateNewBet(baseNumbers, availableNumbers, betSize, totalBets);
 };
 
-const bets = generateBets(extractArgs());
+const execArgs = extractArgs();
+const bets = generateBets(execArgs);
 
 saveBets(bets);
