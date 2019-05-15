@@ -4,6 +4,7 @@ Lightweight, sem depedências, aleatório.
 ## Gerar Jogos
 Por padrão gera apenas 1 jogo e salva em `jogos/last.json`, outros jogos já 
 salvos não são descartados, apenas movidos para outros arquivos.
+
 ```sh
 node generator.js
 ```
@@ -15,7 +16,9 @@ Argumentos opcionais:
 ```
 
 ## Conferir último resultado
-O resul
+O resultado completo é salvo em `resultados/last.json`, o último arquivo é
+apagado.
+
 ```sh
 #                numeros do resultado
 node checker.js -nums=1,2,3,4,5
